@@ -5,7 +5,6 @@
 package view;
 
 import javax.swing.JPanel;
-
 /**
  *
  * @author trant
