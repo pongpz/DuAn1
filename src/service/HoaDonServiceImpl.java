@@ -10,6 +10,7 @@ import model.HoaDon;
 import java.sql.*;
 import connection.ConenctionProvider;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  *
@@ -21,7 +22,7 @@ public class HoaDonServiceImpl implements hoaDonInterface {
 
     @Override
     public List<HoaDon> getAll() {
-        
+
         try {
             List<HoaDon> list = new ArrayList<>();
             String sql = "SELECT * FROM HOADON";
@@ -41,6 +42,7 @@ public class HoaDonServiceImpl implements hoaDonInterface {
                 list.add(hd);
 
             }
+            Collections.reverse(list); 
             return list;
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,7 +71,51 @@ public class HoaDonServiceImpl implements hoaDonInterface {
 
     @Override
     public boolean updateMaKHforHoaDon(int idKh, int idHD) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            String sql = "UPDATE HoaDon SET IDKH = ? WHERE ID = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idKh);
+            stmt.setInt(2, idHD);
+            stmt.execute();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
+
+    @Override
+    public boolean updateTongTien(int idHD, double tongTien) {
+
+        try {
+            String sql = "UPDATE HoaDon SET tongTien = ? WHERE ID = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setDouble(1, tongTien);
+            stmt.setInt(2, idHD);
+            stmt.execute();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateThanhToan(int idHD) {
+        
+        try {
+            String sql = "UPDATE HoaDon SET TinhTrang = 1,NgayThanhToan = GetDate() WHERE ID = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setDouble(1, idHD);
+            stmt.execute();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    
 
 }

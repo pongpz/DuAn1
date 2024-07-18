@@ -3,9 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package service;
+
 import interfacee.SanPhamChiTietInterface;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import model.ChatLieu;
 import model.KichCo;
@@ -19,7 +21,8 @@ import model.ThuongHieu;
  *
  * @author H
  */
-public class SanPhamChiTietService implements SanPhamChiTietInterface{
+public class SanPhamChiTietService implements SanPhamChiTietInterface {
+
     Connection con = connection.ConenctionProvider.getConnection();
 
     @Override
@@ -28,6 +31,7 @@ public class SanPhamChiTietService implements SanPhamChiTietInterface{
         String sql = """
                      	SELECT 
                          CT.Id,
+                         SP.id As idSP,
                      	SP.TenSanPham AS TenSanPham,
                          NSX.Ten AS TenNSX,
                          MS.Ten AS TenMauSac,
@@ -59,55 +63,57 @@ public class SanPhamChiTietService implements SanPhamChiTietInterface{
                      """;
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs =  ps.executeQuery();
-            while (rs.next()) {                
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
                 SanPhamChiTiet sp = new SanPhamChiTiet();
                 sp.setId(rs.getString("Id"));
-                
+
                 ChatLieu cl = new ChatLieu();
                 cl.setTen(rs.getString("TenChatLieu"));
                 sp.setChatLieu(cl);
-                
+
                 sp.setGiaBan(rs.getDouble("GiaBan"));
                 sp.setGiaNhap(rs.getDouble("GiaNhap"));
-                
-                KichCo kc = new  KichCo();
+
+                KichCo kc = new KichCo();
                 kc.setTen(rs.getString("TenKichCo"));
                 sp.setKichCo(kc);
-                
+
                 MauSac ms = new MauSac();
                 ms.setTen(rs.getString("TenMauSac"));
                 sp.setMauSac(ms);
-                
+
                 NSX nsx = new NSX();
                 nsx.setTen(rs.getString("TenNSX"));
                 sp.setNhaSx(nsx);
-                
-                sp.setQrCode(rs.getString("QrCode"));
+
                 sp.setSoLuongTon(rs.getInt("SoLuongTon"));
-                
+
                 SanPham sp1 = new SanPham();
                 sp1.setTen(rs.getString("TenSanPham"));
+                sp1.setId(rs.getString("idSP"));
                 sp.setTenSp(sp1);
-                
+
                 ThuongHieu th = new ThuongHieu();
                 th.setTen(rs.getString("TenThuongHieu"));
                 sp.setThuongHieu(th);
-                
+
                 sp.setKhuyenMai(rs.getString("TenKhuyenMai"));
                 sp.setMoTa(rs.getString("MoTa"));
                 list.add(sp);
-                
-            }return list;
+
+            }
+            Collections.reverse(list);
+            return list;
         } catch (Exception e) {
             return null;
         }
-        
+
     }
 
     @Override
     public int add(model.SanPhamChiTiet spct) {
-        String sql ="""
+        String sql = """
                     INSERT INTO dbo.ChitietSP
                     	(
                     	    IdNsx,
@@ -137,7 +143,7 @@ public class SanPhamChiTietService implements SanPhamChiTietInterface{
             ps.setObject(9, spct.getGiaBan());
             ps.setObject(10, spct.getId());
             return ps.executeUpdate();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -150,7 +156,7 @@ public class SanPhamChiTietService implements SanPhamChiTietInterface{
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setObject(1, sp.getId());
-            ps.setObject(2, sp.getNhaSx().getId() );
+            ps.setObject(2, sp.getNhaSx().getId());
             ps.setObject(3, sp.getMauSac().getId());
             ps.setObject(4, sp.getKichCo().getId());
             ps.setObject(5, sp.getChatLieu().getId());
@@ -161,15 +167,11 @@ public class SanPhamChiTietService implements SanPhamChiTietInterface{
             ps.setObject(10, sp.getGiaBan());
             ps.setObject(11, id);
             return ps.executeUpdate();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
     }
 
-    
-   
-    
-    
 }
